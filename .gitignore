@@ -1,0 +1,13 @@
+*.code-workspace
+Notes.md
+__pycache__/
+
+data/
+testing.txt
+venv/
+testing/
+.env/
+__pycache__/
+*.pyc
+
+screenshots/
