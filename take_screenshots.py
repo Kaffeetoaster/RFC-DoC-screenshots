@@ -69,6 +69,19 @@ def move_up(seconds):
     pyautogui.keyUp('up')
 
 
+def move_to_next_column(Number_x, Number_y, delay_x, delay_y):
+    for i in range(Number_y - 1): # move back down to the bottom
+        move_down(delay_y)
+                 
+    time.sleep(1.0)
+    #take_screenshot(f'screenshots/screenshot_{x}_{0}_control.png')
+    move_right(delay_x)
+    time.sleep(1.0)
+
+def move_to_next_column_unit(Number_x, Number_y, delay_x, delay_y):
+    pyautogui.press('Enter')
+    time.sleep(5.0)
+
 def take_screenshots(Number_x, Number_y, delay_x, delay_y):
     for x in range(Number_x):
         for y in range(Number_y):
@@ -76,15 +89,10 @@ def take_screenshots(Number_x, Number_y, delay_x, delay_y):
             take_screenshot(f'screenshots/screenshot_{x}_{y}.png')
             if y != Number_y - 1: # don't move up after the last screenshot in the column
                 move_up(delay_y)
-                time.sleep(1.0)
+                time.sleep(2.0)
         # move to next row
         if x != Number_x - 1: # don't move right after the last column
-            for i in range(Number_y - 1): # move back down to the bottom
-                 move_down(delay_y)
-            # time.sleep(1.0)
-            # take_screenshot(f'screenshots/screenshot_{x}_{0}_control.png')
-            move_right(delay_x)
-            time.sleep(1.0)
+             move_to_next_column(Number_x, Number_y, delay_x, delay_y)
 
 
 
