@@ -200,11 +200,11 @@ def stitch_images_columnwise(images,number_x, number_y,overlap):
         column_images = images[x*number_y:(x + 1)*number_y]
         print(f"Stitching column {x} with {len(column_images)} images...")
         
-        vertical_overlaps = calculate_vertical_overlaps(column_images, overlap, tol=0)
+        vertical_overlaps = calculate_vertical_overlaps(column_images, overlap, tol=30)
 
         ## maybe take average of overlaps for all overlaps?
-        average_overlap = int(np.mean(vertical_overlaps))
-        vertical_overlaps = [average_overlap] * len(vertical_overlaps)
+        # average_overlap = int(np.mean(vertical_overlaps))
+        # vertical_overlaps = [average_overlap] * len(vertical_overlaps)
         print(f"Stitching column {x} with vertical overlaps: {vertical_overlaps}...")
         stitched_column = stitch_images_in_column(column_images, vertical_overlaps)
         stitched_column.save(f"screenshots/columns/stitched_column_{x}.png")
@@ -213,8 +213,9 @@ def stitch_images_columnwise(images,number_x, number_y,overlap):
 
 def stitch_columns_together(column_images, overlap):
     # stitches together images left to right
-    horizontal_overlaps = calculate_horizontal_overlaps(column_images, overlap, tol=TOLERANCE)
     images_scaled = scale_images_to_same_height(column_images)
+    horizontal_overlaps = calculate_horizontal_overlaps(images_scaled, overlap, tol=TOLERANCE)
+    
     stitched_image = stitch_images_in_row(images_scaled, horizontal_overlaps, [0] * len(images_scaled))
     return stitched_image
 
