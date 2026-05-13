@@ -3,7 +3,7 @@ import os
 
 ### config
 
-## calibration for different zoom levels
+## calibration for different zoom levels, just to keep track of them.
 # name | zoomlevel (for file names)...
 # ...| number of columns and rows | delay between screenshots (moving right and top) | expected overlap in pixels (right/left and top/bottom)
 CALIBRATION = {
@@ -16,7 +16,7 @@ CALIBRATION = {
 NUM_SCREENSHOTS = (10, 12) # 10 columns, 12 rows
 DELAY_BETWEEN_SCREENSHOTS = (2.5, 1.0) #  moving right and top in seconds
 OVERLAP = (660, 548) # overlap in pixels to the right/left and top/bottom
-
+TOLERANCE = 30 # tolerance in pixels for finding the best overlap
 
 
 OUTPUT_DIR = "screenshots"

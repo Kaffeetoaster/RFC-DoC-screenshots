@@ -3,7 +3,7 @@ import numpy as np
 
 
 from measure_duration import measure
-from config.config import IMAGE_PATHS, OVERLAP, NUM_SCREENSHOTS
+from config.config import IMAGE_PATHS, OVERLAP, NUM_SCREENSHOTS, TOLERANCE
 
 def load_images(paths):
     images = []
@@ -134,6 +134,8 @@ def scale_images_to_same_height(column_images):
 
 
 def stitch_images_vertical(img1, img2, overlap, show_seam = False):
+    # stitches img1 and img2 together vertically with the given overlap in pixels.
+    # was for testing purposes.
     w, h = img1.size
 
     result = Image.new("RGB", (w, h * 2 - overlap))
@@ -192,6 +194,7 @@ def stitch_images_in_row(img_list, overlaps, vertical_offsets):
     return result
 
 def stitch_images_columnwise(images,number_x, number_y,overlap):
+    # stich images in a column from bottom to top.
     results = []
     for x in range(number_x):
         column_images = images[x*number_y:(x + 1)*number_y]
@@ -209,52 +212,14 @@ def stitch_images_columnwise(images,number_x, number_y,overlap):
     return results
 
 def stitch_columns_together(column_images, overlap):
-    
-    horizontal_overlaps = calculate_horizontal_overlaps(column_images, overlap, tol=25)
+    # stitches together images left to right
+    horizontal_overlaps = calculate_horizontal_overlaps(column_images, overlap, tol=TOLERANCE)
     images_scaled = scale_images_to_same_height(column_images)
     stitched_image = stitch_images_in_row(images_scaled, horizontal_overlaps, [0] * len(images_scaled))
     return stitched_image
 
 
-# def calculate_column_offset(img1, img2, average_overlap, tol, offset):
-#     arr1 = np.array(img1)
-#     arr2 = np.array(img2)
 
-#     best_overlap = None
-#     best_score = float("inf")
-
-#     for overlap in range(average_overlap - tol, average_overlap + tol + 1):
-#         region1 = arr1[:, -overlap:]      # right of img1
-#         region2 = arr2[:, :overlap]     # left of img2
-#         # region2 zusätzlich noch um offset verschieben
-#         for i in range(-offset, offset + 1):
-#             shifted_region2 = np.roll(region2, i, axis=0)  # shift vertically by i pixels
-
-#             score = np.mean(
-#                 (region1.astype(np.float32) - shifted_region2.astype(np.float32)) ** 2
-#             )
-
-#             if score < best_score:
-#                 best_score = score
-#                 best_overlap = overlap
-#                 best_offset = i
-#     print(f"Best horizontal overlap: {best_overlap} pixels with MSE score: {best_score}")
-#     return best_overlap, best_offset
-
-
-def stitch_columns_together_with_vertical_offset(column_images, average_overlap, vertical_offset):
-    
-    overlaps = []
-    offsets = []
-    for i in range(len(column_images) - 1):
-        overlap, offset = measure(calculate_column_offset, column_images[i], column_images[i + 1], average_overlap, 15, vertical_offset)
-        overlaps.append(overlap)
-        offsets.append(offset)
-    print("overlaps:", overlaps)
-    print("offsets:", offsets)
-    stitched_image = stitch_images_in_row(column_images, overlaps, offsets)
-    return stitched_image
-    
 
 
 loaded_images = measure(load_images, IMAGE_PATHS)
@@ -264,7 +229,5 @@ print("loaded images")
 column_images = measure(stitch_images_columnwise, loaded_images,NUM_SCREENSHOTS[0], NUM_SCREENSHOTS[1], OVERLAP[1])
 
 measure(stitch_columns_together, column_images, OVERLAP[0]).save("stitched.jpg")
-
-#measure(stitch_columns_together_with_vertical_offset, column_images, OVERLAP[0], 30).save("stitched_with_offset.png")
 
 print("Done!")
