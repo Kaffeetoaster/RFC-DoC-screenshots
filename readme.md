@@ -16,7 +16,7 @@ In _config.py_ you can configure the process, by setting the number of screensho
 
 _Note: the screenshots move top and right_
 
-The time to move depends on the overlap. So less expected overlap means the camera needs to move more for the next screenshot. I advise to first take only 2x2 screenshots to configure these values. Just open the 4 imgs in gimp or sth and give a guess for the vertical and horizontal overlap.
+The time to move depends on the overlap. So less expected overlap means the camera needs to move less for the next screenshot. I advise to first take only 2x2 screenshots to configure these values. Just open the 4 imgs in gimp or sth and give a guess for the vertical and horizontal overlap.
 
 _execute take_screenshots.py_
 
