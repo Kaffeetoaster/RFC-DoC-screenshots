@@ -89,7 +89,7 @@ def take_screenshots(Number_x, Number_y, delay_x, delay_y):
             take_screenshot(f'screenshots/screenshot_{x}_{y}.png')
             if y != Number_y - 1: # don't move up after the last screenshot in the column
                 move_up(delay_y)
-                time.sleep(2.0)
+                time.sleep(1.0)
         # move to next row
         if x != Number_x - 1: # don't move right after the last column
              move_to_next_column(Number_x, Number_y, delay_x, delay_y)

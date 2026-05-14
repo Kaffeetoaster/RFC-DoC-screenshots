@@ -16,7 +16,7 @@ def load_images(paths):
         raise ValueError("IMAGE_PATHS must contain at least one image")
     return images
 
-def find_vertical_overlap(img1, img2, average_overlap, tol = 30):
+def find_vertical_overlap(img1, img2, average_overlap, tol = TOLERANCE):
     arr1 = np.array(img1)
     arr2 = np.array(img2)
 
@@ -37,7 +37,7 @@ def find_vertical_overlap(img1, img2, average_overlap, tol = 30):
     #print(f"Best vertical overlap: {best_overlap} pixels with MSE score: {best_score}")
     return best_overlap
 
-def find_horizontal_overlap(img1, img2, average_overlap, tol = 30):
+def find_horizontal_overlap(img1, img2, average_overlap, tol = TOLERANCE):
     arr1 = np.array(img1)
     arr2 = np.array(img2)
 
@@ -58,14 +58,14 @@ def find_horizontal_overlap(img1, img2, average_overlap, tol = 30):
     print(f"Best horizontal overlap: {best_overlap} pixels with MSE score: {best_score}")
     return best_overlap
 
-def calculate_horizontal_overlaps(images, average_overlap, tol = 30):
+def calculate_horizontal_overlaps(images, average_overlap, tol = TOLERANCE):
     overlaps = []
     for i in range(len(images) - 1):
         overlap = find_horizontal_overlap(images[i], images[i + 1], average_overlap, tol)
         overlaps.append(overlap)
     return overlaps
 
-def calculate_vertical_overlaps(images, average_overlap, tol = 30):
+def calculate_vertical_overlaps(images, average_overlap, tol = TOLERANCE):
     overlaps = []
     for i in range(len(images) - 1):
         overlap = find_vertical_overlap(images[i], images[i + 1], average_overlap, tol)
@@ -87,6 +87,7 @@ def scale_image(img1, img2):
             if not np.all(row == 0):
                 return i
         return h
+    
     def count_black_from_bottom(arr):
         h = arr.shape[0]
 
@@ -95,7 +96,6 @@ def scale_image(img1, img2):
 
             if not np.all(row == 0):
                 return h - i - 1
-
         return h
 
     top_black_1 = count_black_from_top(arr1)
@@ -119,6 +119,7 @@ def scale_image(img1, img2):
         (final_h, target_w, 3),
         dtype=np.uint8
     )
+    print(f"top black 1: {top_black_1}, bottom black 1: {bottom_black_1}, top black 2: {top_black_2}, bottom black 2: {bottom_black_2}")
     result[top_black_1 : top_black_1 + target_h] = res
 
     return Image.fromarray(result)
@@ -200,12 +201,15 @@ def stitch_images_columnwise(images,number_x, number_y,overlap):
         column_images = images[x*number_y:(x + 1)*number_y]
         print(f"Stitching column {x} with {len(column_images)} images...")
         
-        vertical_overlaps = calculate_vertical_overlaps(column_images, overlap, tol=30)
+        vertical_overlaps = calculate_vertical_overlaps(column_images, overlap, tol=TOLERANCE)
 
-        ## maybe take average of overlaps for all overlaps?
-        # average_overlap = int(np.mean(vertical_overlaps))
-        # vertical_overlaps = [average_overlap] * len(vertical_overlaps)
+        ## maybe take average of overlaps for all overlaps? to fight the ocean noise.
+        #average_overlap = int(np.mean(vertical_overlaps))
+
         print(f"Stitching column {x} with vertical overlaps: {vertical_overlaps}...")
+        #print(f"Average vertical overlap for column {x}: {average_overlap} pixels")
+
+        #vertical_overlaps = [average_overlap] * len(vertical_overlaps)
         stitched_column = stitch_images_in_column(column_images, vertical_overlaps)
         stitched_column.save(f"screenshots/columns/stitched_column_{x}.png")
         results.append(stitched_column)
@@ -213,6 +217,7 @@ def stitch_images_columnwise(images,number_x, number_y,overlap):
 
 def stitch_columns_together(column_images, overlap):
     # stitches together images left to right
+
     images_scaled = scale_images_to_same_height(column_images)
     horizontal_overlaps = calculate_horizontal_overlaps(images_scaled, overlap, tol=TOLERANCE)
     
@@ -229,6 +234,7 @@ print("loaded images")
 
 column_images = measure(stitch_images_columnwise, loaded_images,NUM_SCREENSHOTS[0], NUM_SCREENSHOTS[1], OVERLAP[1])
 
-measure(stitch_columns_together, column_images, OVERLAP[0]).save("stitched.jpg")
+img_res = measure(stitch_columns_together, column_images, OVERLAP[0])
+img_res.save("stitched.png")
 
 print("Done!")
