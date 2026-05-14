@@ -13,6 +13,7 @@ This utility consists of two scripts to take and then stitch together screenshot
 ### Taking screenshots:
 
 In _config.py_ you can configure the process, by setting the number of screenshots you want to take, expected overlap and time to move up and right between the screenshots.
+When working with a nice zoom it gets really hard to stitch the ocean tiles. I think in general more overlap ist better than less, even though it takes more screenshots to capture the whole map. For part of the stichting process its useful to have the black bar at the top of the map in your top row of screenshots.
 
 _Note: the screenshots move top and right_
 
@@ -30,6 +31,7 @@ This script will stitch together all the screenshots taken. First columnwise, an
 
     Be careful! 
     Taking screenshots and stitching the images will overwrite older screenshots and stitching results! So move your result to a different fodler or rename it, if you want to keep it.
+
 
 
 ### Additioal timing module.
